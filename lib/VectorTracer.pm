@@ -44,7 +44,9 @@ sub trace {
 	my $x 	 = shift // 0;
 	
 	if (ref $node eq 'HASH') {
-		my ($key, $value) = each %$node;
+		my ($key) = keys %$node;
+		my $value = $node->{$key};
+		
 		if ($self->{functions}->{$key}) {
 			my $a = $self->trace($value, $x);
 			return sin($a) if ($key eq 'sin');
