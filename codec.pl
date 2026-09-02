@@ -11,26 +11,33 @@ my $M_PI = pi;
 die "Usage:\n$0 Input_file.mp3\n" unless $input;
 die "Input file $input not found\n" unless -f $input;
 
-my $out = `ffmpeg -i $input -f f32le pipe:1`;
+my $out = `ffmpeg -hide_banner -loglevel error -i $input -f f32le pipe:1`;
 
 my @chunks = unpack("(A4)*", $out);
+
 
 my $t = 0;
 my $x = [];
 my $y = [];
 
+use Data::Dumper;
+
 for (@chunks) {
 	next unless defined $_;
-	push @$x, $t / 400;
-	push @$y, $_;
+	my @l = map {sprintf("%X", $_)} map {ord $_} unpack("(A1)*", $_);  
+	my $hex = join '', @l;
+	my $i = unpack("d<", pack("H*", hex $hex));
+	
+	push @$x, $t / 4000.0;
+	push @$y, $i // 0;
 	
 	$t ++;
 }
 
-use Data::Dumper;
 
 my $period = 5;
-my $m = 50;
+my $m = 20;
+my $omega = 2.0 * $M_PI / $period;
 
 # Interpolate
 
@@ -45,22 +52,27 @@ for (0..scalar(@$x)-1) {
 close $tmp;
 
 my $data = `./interpolator < ./tmp.1`;
-
 unlink 'tmp.1';
 
-say $data;
+chomp $data;
+
+my @k = split /\n/, $data;
 
 
-#my $num = 0;
-#for my $c (@chunks) {
-#	my $s = unpack('f', $c);
-#	next unless defined $s;
-#	push @$x, $num / 400;
-#	push @$y, $s;
-#
-#	$num ++;
-#}
+my $json = {format => 'audio', 'verion' => '0.1'};
 
+my $f = $k[0];
+
+for (my $i = 1 ; $i <= $m ; $i++) {
+	my $ak = $k[2 * $i - 1];
+	my $bk = $k[2 * $i];
+	$f .= "+($ak*cos($i*$omega*x(1))+($bk*sin($i*$omega*x(1))";
+}
+
+$json->{data} = {f => $f, length => 500};
+
+
+say encode_json $json;
 
 
 1;
