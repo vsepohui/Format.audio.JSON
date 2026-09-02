@@ -8,16 +8,29 @@ use JSON::XS;
 my $input = $ARGV[0];
 my $M_PI = pi;
 
+die "Usage:\n$0 Input_file.mp3\n" unless $input;
+die "Input file $input not found\n" unless -f $input;
 
-#my $out = `ffmpeg -i $input -f f32le pipe:1`;
+my $out = `ffmpeg -i $input -f f32le pipe:1`;
 
-#my @chunks = unpack("(A4)*", $out);
+my @chunks = unpack("(A4)*", $out);
 
-my $x = [0, 	1,		2, 		3,		4,		5];
-my $y = [0.5, 	1.2, 	0.1, 	-0.8, 	-0.2,	0.6];
+my $t = 0;
+my $x = [];
+my $y = [];
+
+for (@chunks) {
+	next unless defined $_;
+	push @$x, $t / 400;
+	push @$y, $_;
+	
+	$t ++;
+}
+
+use Data::Dumper;
 
 my $period = 5;
-my $m = 2;
+my $m = 50;
 
 # Interpolate
 
