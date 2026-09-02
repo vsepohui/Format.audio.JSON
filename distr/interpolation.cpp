@@ -1,7 +1,10 @@
 #include <iostream>
+#include <format>
 #include <vector>
 #include <cmath>
 #include <numeric>
+#include <cfloat>
+#include <cstdio>
 
 // Структура для представления точки данных
 struct Point {
@@ -113,10 +116,10 @@ public:
 
     // Вывод полученных коэффициентов
     void printCoefficients() const {
-        std::cout << coeffs[0] << "\n";
+        std::printf("%.8f\n", coeffs[0]);
         for (int k = 1; k <= numHarmonics; ++k) {
-            std::cout << coeffs[2 * k - 1] << "\n";
-			std::cout << coeffs[2 * k] << "\n";
+            printf("%.8f\n", coeffs[2 * k - 1]);
+			printf("%.8f\n", coeffs[2 * k]);
         }
     }
 };
