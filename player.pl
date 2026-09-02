@@ -37,10 +37,11 @@ my $f = $json->{data}->{f};
 my $tracer = new VectorTracer(debug => 0);
 my $node = $tracer->parse($f);
 
+# Render wave
 my @s = ();
-for my $x (0 .. $length) {
+for my $x (0 .. $length * 400) {
 	# Render audio from formula
-	my $signal = $tracer->trace(undef, $x);
+	my $signal = $tracer->trace(undef, $x / 100);
 	
 	# Limiter
 	$signal = 1 if ($signal > 1);
@@ -53,11 +54,6 @@ my $wave = pack "f*", @s;
 
 
 # Play
-for (0 .. 400) {
-	$stream->write($wave);
-}
-
-
-
+$stream->write($wave);
 
 1;
