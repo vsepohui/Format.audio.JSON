@@ -84,6 +84,7 @@ public:
             for (int j = 0; j < numCoeffs; ++j) {
                 double sum = 0.0;
                 for (const auto& p : points) {
+					// std::cout << sum << "\n";
                     sum += getBasis(p.x, i) * getBasis(p.x, j);
                 }
                 A[i][j] = sum;
@@ -112,34 +113,42 @@ public:
 
     // Вывод полученных коэффициентов
     void printCoefficients() const {
-        std::cout << "a0 = " << coeffs[0] << "\n";
+        std::cout << coeffs[0] << "\n";
         for (int k = 1; k <= numHarmonics; ++k) {
-            std::cout << "a" << k << " = " << coeffs[2 * k - 1] 
-                      << ", b" << k << " = " << coeffs[2 * k] << "\n";
+            std::cout << coeffs[2 * k - 1] << "\n";
+			std::cout << coeffs[2 * k] << "\n";
         }
     }
 };
 
 int main() {
     // Входные точки (например, зашумленный синус)
-    std::vector<Point> points = {
-        {0.0, 0.5}, {1.0, 1.2}, {2.0, 0.1}, {3.0, -0.8}, {4.0, -0.2}, {5.0, 0.6}
-    };
+    std::vector<Point> points;
+    
 
-    double period = 5.0; // Ожидаемый период функции
-    int M = 2;           // Количество используемых гармоник (переменное число)
+    double period; // Ожидаемый период функции
+    int M;           // Количество используемых гармоник (переменное число)
+    int l;
+    
+    std::cin >> period;
+    std::cin >> M;
+    
+    std::cin >> l;
+    
+    for (int i = 1 ; i <= l ; i++) {
+		float x, y;
+		std::cin >> x;
+		std::cin >> y;
+		Point p = {x, y};
+		points.push_back(p);
+	}
 
     HarmonicInterpolator interpolator;
     interpolator.fit(points, M, period);
 
-    std::cout << "--- Вычисленные коэффициенты Фурье ---" << std::endl;
+//    std::cout << "--- Вычисленные коэффициенты Фурье ---" << std::endl;
     interpolator.printCoefficients();
 
-    std::cout << "\n--- Проверка интерполяции в точках ---" << std::endl;
-    for (const auto& p : points) {
-        double y_pred = interpolator.evaluate(p.x);
-        std::cout << "X: " << p.x << " | Исходный Y: " << p.y << " | Интерполированный Y: " << y_pred << "\n";
-    }
 
     return 0;
 }
