@@ -37,6 +37,7 @@ my $f = $json->{data}->{f};
 my $tracer = new VectorTracer(debug => 0);
 my $node = $tracer->parse($f);
 
+
 # Render wave
 my @s = ();
 for my $x (0 .. $length * 400) {

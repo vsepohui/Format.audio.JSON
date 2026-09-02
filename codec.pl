@@ -24,11 +24,13 @@ use Data::Dumper;
 
 for (@chunks) {
 	next unless defined $_;
-	my @l = map {sprintf("%X", $_)} map {ord $_} unpack("(A1)*", $_);  
+	my @l = map {sprintf("%x", $_)} map {ord $_} unpack("(A1)*", $_);  
 	my $hex = join '', @l;
-	my $i = unpack("d<", pack("H*", hex $hex));
+	my $i = unpack("f", pack("H*", $hex)) // 0;
+	$i = 1 if $i > 1;
+	$i = -1 if $i < -1;
 	
-	push @$x, $t / 4000.0;
+	push @$x, $t / 400.0;
 	push @$y, $i // 0;
 	
 	$t ++;
@@ -36,7 +38,7 @@ for (@chunks) {
 
 
 my $period = 5;
-my $m = 20;
+my $m = 2;
 my $omega = 2.0 * $M_PI / $period;
 
 # Interpolate
@@ -66,7 +68,7 @@ my $f = $k[0];
 for (my $i = 1 ; $i <= $m ; $i++) {
 	my $ak = $k[2 * $i - 1];
 	my $bk = $k[2 * $i];
-	$f .= "+($ak*cos($i*$omega*x(1))+($bk*sin($i*$omega*x(1))";
+	$f .= "+($ak*cos($i*$omega*x(1))+($bk*sin($i*$omega*x(1)))";
 }
 
 $json->{data} = {f => $f, length => 500};
