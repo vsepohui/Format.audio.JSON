@@ -6,10 +6,9 @@ use warnings;
 use Audio::PortAudio;
 use JSON::XS;
 
+# Init audio system
 my $api = Audio::PortAudio::default_host_api();
 my $device  = $api->default_output_device;
-my $pi = 3.14159265358979323846;
-my $sine = pack "f*", map { sin( $pi * $_ / 100 ) / 8 } 0 .. 399;
 
 my $stream = $device->open_write_stream(
     {
@@ -20,8 +19,17 @@ my $stream = $device->open_write_stream(
     0
 );
 
-for (0 .. 400) {
-    $stream->write($sine);
-}
+# Load file
+
+my @input = <>;
+my $s = join '', @input;
+
+my $json = decode_json $s;
+
+
+
+#for (0 .. 400) {
+#    $stream->write($sine);
+#}
 
 1;
