@@ -3,7 +3,7 @@ Hardcore audio codec of next generation!
 
 Install
 
-# sudo cpan install Audio::PortAudio JSON::XS
+# sudo cpan install Audio::PortAudio Audio::Wav JSON::XS
 
 Usage:
 
