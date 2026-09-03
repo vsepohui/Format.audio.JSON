@@ -14,47 +14,44 @@ use VectorTracer;
 my $api = Audio::PortAudio::default_host_api();
 my $device  = $api->default_output_device;
 
+my $sample_rate = 44100;
+
 my $stream = $device->open_write_stream(
-    {
-        channel_count => 1,
-    },
-    44100,
+	{ channel_count => 1 },
+    $sample_rate,
     400,
     0
 );
 
-# Load file
-
+# Load file from STDIN
 my @input = <>;
 my $s = join '', @input;
 
+# Decode input file from JSON
 my $json = decode_json $s;
 
-my $length = $json->{data}->{length};
-my $f = $json->{data}->{f};
+my $data 	= $json->{data};
 
+my $length 	= $data->{length};
+my $f 		= $data->{f};
 
+# f(x) parser init
 my $tracer = new VectorTracer(debug => 0);
-my $node = $tracer->parse($f);
 
+# parse fuction f(x)
+my $node = $tracer->parse($f);
 
 # Render wave
 my @s = ();
-for my $x (0 .. int ($length * 44100)) {
+for my $x (0 .. int ($length * $sample_rate)) {
 	# Render audio from formula
-	my $signal = $tracer->trace($node, $x / 44100);
-	
-	# Limiter
-	#$signal = 1 if ($signal > 1);
-	#$signal = -1 if ($signal < -1);
-	push @s, $signal;
+	push @s, $tracer->trace($node, $x / $sample_rate);
 }
 
+# Convert data
 my $wave = pack "f*", @s;
 
-
-
-# Play
+# Let's play audio!
 $stream->write($wave);
 
 1;
