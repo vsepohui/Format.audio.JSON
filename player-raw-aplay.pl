@@ -10,12 +10,9 @@ use VectorTracer;
 
 
 # Constants
-my $sample_rate = 44100;
-my $frequency   = 440;
-my $duration    = 3;  
-my $volume      = 0.5;
-
-my $max_amplitude = 32767 * $volume;
+my $sample_rate 	= 44100;
+my $volume      	= 0.5;
+my $max_amplitude 	= 32767 * $volume;
 
 
 # Load file from STDIN
