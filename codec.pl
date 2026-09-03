@@ -29,17 +29,17 @@ for (@chunks) {
 		
 	$max = 32767;
 
-	push @$x, $t / 44100;
-	push @$y, $i;
+	push @$x, $t;
+	push @$y, $i / $max;
 		
 	$t ++;
 }
 
 $y = [map {$_ / $max} @$y];
 
-my $period = 1.0;
-my $m = 5;
-my $omega = 1;
+my $period = 5*44100;
+my $m = 10;
+my $omega = 880*3.1415;
 
 # Interpolate
 
@@ -72,7 +72,7 @@ for (my $i = 1 ; $i <= $m ; $i++) {
 	$f .= "+($ak*cos(x(1)*$p))+($bk*sin(x(1)*$p))";
 }
 
-$json->{data} = {f => $f, length => 1.3};
+$json->{data} = {f => $f, length => scalar (@$x) / 44100};
 
 
 say encode_json $json;
