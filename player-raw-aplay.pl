@@ -54,7 +54,7 @@ for my $x (0 .. int ($length * $sample_rate)) {
 }
 close $fh;
 
-# Let's play audio by aplat utility
+# Let's play audio by aplay utility
 `aplay -f s16_le -r 44100 -c 1 tmp-play.pcm`;
 
 # Remove tmp PCM file
