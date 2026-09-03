@@ -20,29 +20,17 @@ my $t = 0;
 my $x = [];
 my $y = [];
 
-use Data::Dumper;
-
 my $max = 0;
 
 for (@chunks) {
 	my ($left, $right) = unpack('s<s<', $_);
-	#say "$left -- $right";
-	#die $left;
 	
 	my $i = $left;
 		
-	$max = 32_767;
-	#warn $i;
+	$max = 32767;
 
-	#$i = 1 if $i > 1;
-	#$i = -1 if $i < -1;
-		
-	#warn $i;
-	
-	$i = '0' if $i eq 'NaN';
-		
-	push @$x, $t / 44000;
-	push @$y, $i // 0;
+	push @$x, $t / 44100;
+	push @$y, $i;
 		
 	$t ++;
 }
@@ -54,16 +42,6 @@ for (@chunks) {
 
 
 $y = [map {$_ / $max} @$y];
-
-#@t = sort {abs $a <=> abs $b} @$y;
-#die $t[-1];
-
-#use Data::Dumper;
-#say Dumper $y;
-#exit;
-
-
-
 
 my $period = 1;
 my $m = 40;
@@ -99,7 +77,7 @@ for (my $i = 1 ; $i <= $m ; $i++) {
 	$f .= "+($ak*cos($i*$omega*x(1))+($bk*sin($i*$omega*x(1)))";
 }
 
-$json->{data} = {f => $f, length => 130};
+$json->{data} = {f => $f, length => 1.3};
 
 
 say encode_json $json;

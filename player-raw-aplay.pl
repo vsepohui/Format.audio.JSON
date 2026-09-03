@@ -36,13 +36,15 @@ open(my $fh, '>', 'tmp-play.pcm');
 
 # Render wave
 my @s = ();
-for my $x (0 .. $length * 400) {
+for my $x (0 .. $length * 44100) {
+	# Формула синуса: sin(2 * pi * f * t)
+    my $t = $x / $sample_rate;	
+    
 	# Render audio from formula
-	my $signal = $tracer->trace(undef, $x / 100);
+	my $signal = $tracer->trace(undef, $t);
 
 
-    # Формула синуса: sin(2 * pi * f * t)
-    my $t = $x / $sample_rate;
+    
     my $sample = $signal * $max_amplitude;
     
     # Округляем до целого числа

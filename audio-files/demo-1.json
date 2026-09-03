@@ -2,6 +2,6 @@
 	"format": "audio", 
 	"version": "0.1", 
 	"data": { 
-		"length": 500, "f": "sin(x(1))" 
+		"length": 5, "f": "sin(x(1)*44100)" 
 	}
 }
