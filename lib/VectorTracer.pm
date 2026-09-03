@@ -59,9 +59,6 @@ sub trace {
 			...
 		} elsif (exists $self->{operators}->{$key}) {
 			my ($a, $b) = (@$value);
-			use Data::Dumper;
-			warn Dumper $a;
-			warn Dumper $b;
 			$a = $self->trace($a, $x);
 			$b = $self->trace($b, $x);
 			return $a + $b if ($key eq '+');

@@ -32,19 +32,20 @@ my $f = $json->{data}->{f};
 my $tracer = new VectorTracer(debug => 0);
 my $node = $tracer->parse($f);
 
+
+
+
 open(my $fh, '>', 'tmp-play.pcm');
 
 # Render wave
 my @s = ();
-for my $x (0 .. $length * 44100) {
-	# Формула синуса: sin(2 * pi * f * t)
+for my $x (0 .. int ($length * 44100)) {
     my $t = $x / $sample_rate;	
     
 	# Render audio from formula
-	my $signal = $tracer->trace(undef, $t);
-
-
-    
+	my $signal = $tracer->trace($node, $t);
+	my $check = sin($t*880*3.1415);
+   
     my $sample = $signal * $max_amplitude;
     
     # Округляем до целого числа
