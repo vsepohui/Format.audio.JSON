@@ -40,13 +40,13 @@ my $node = $tracer->parse($f);
 
 # Render wave
 my @s = ();
-for my $x (0 .. $length * 400) {
+for my $x (0 .. int ($length * 44100)) {
 	# Render audio from formula
-	my $signal = $tracer->trace(undef, $x / 100);
+	my $signal = $tracer->trace($node, $x / 44100);
 	
 	# Limiter
-	$signal = 1 if ($signal > 1);
-	$signal = -1 if ($signal < -1);
+	#$signal = 1 if ($signal > 1);
+	#$signal = -1 if ($signal < -1);
 	push @s, $signal;
 }
 
