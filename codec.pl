@@ -11,9 +11,9 @@ my $M_PI = pi;
 die "Usage:\n$0 Input_file.mp3\n" unless $input;
 die "Input file $input not found\n" unless -f $input;
 
-my $out = `ffmpeg -hide_banner -loglevel error -i $input -f f32le pipe:1`;
+my $out = `ffmpeg -loglevel quiet -i $input -f s16le -acodec pcm_s16le pipe:1`;
 
-my @chunks = unpack("(A4)*", $out);
+my @chunks = unpack("(a4)*", $out);
 
 
 my $t = 0;
@@ -22,23 +22,51 @@ my $y = [];
 
 use Data::Dumper;
 
+my $max = 0;
+
 for (@chunks) {
-	next unless defined $_;
-	my @l = map {sprintf("%x", $_)} map {ord $_} unpack("(A1)*", $_);  
-	my $hex = join '', @l;
-	my $i = unpack("f", pack("H*", $hex)) // 0;
-	$i = 1 if $i > 1;
-	$i = -1 if $i < -1;
+	my ($left, $right) = unpack('s<s<', $_);
+	#say "$left -- $right";
+	#die $left;
 	
-	push @$x, $t / 400.0;
+	my $i = $left;
+		
+	$max = 32_767;
+	#warn $i;
+
+	#$i = 1 if $i > 1;
+	#$i = -1 if $i < -1;
+		
+	#warn $i;
+	
+	$i = '0' if $i eq 'NaN';
+		
+	push @$x, $t / 44000;
 	push @$y, $i // 0;
-	
+		
 	$t ++;
 }
 
+#my @t = sort {abs $a <=> abs $b} @$y;
+#warn $t[-1];
 
-my $period = 5;
-my $m = 2;
+#warn $max;
+
+
+$y = [map {$_ / $max} @$y];
+
+#@t = sort {abs $a <=> abs $b} @$y;
+#die $t[-1];
+
+#use Data::Dumper;
+#say Dumper $y;
+#exit;
+
+
+
+
+my $period = 1;
+my $m = 40;
 my $omega = 2.0 * $M_PI / $period;
 
 # Interpolate
@@ -71,7 +99,7 @@ for (my $i = 1 ; $i <= $m ; $i++) {
 	$f .= "+($ak*cos($i*$omega*x(1))+($bk*sin($i*$omega*x(1)))";
 }
 
-$json->{data} = {f => $f, length => 500};
+$json->{data} = {f => $f, length => 130};
 
 
 say encode_json $json;
