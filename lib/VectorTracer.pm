@@ -51,7 +51,7 @@ sub trace {
 		if ($self->{functions}->{$key}) {
 			return $x if ($key eq 'x');
 
-			my $a = $self->trace({%$value}, $x);
+			my $a = $self->trace($value, $x);
 
 			return sin($a) if ($key eq 'sin');
 			return cos($a) if ($key eq 'cos');
@@ -90,8 +90,8 @@ sub prepare_multi_and_div {
 			my $op = $c;
 			$op = '**' if $s[$i+1] eq '*';
 			# Go back
+			my $cnt = 0;
 			for (my $j = $i - 1; $j >= 0 ; $j --) {
-				my $cnt = 0;
 				if ($j eq ')') {
 					$cnt ++;
 					next;
@@ -318,14 +318,20 @@ sub _parse {
 			my $func_end = 0;
 			my $buff = '';
 			
+			my $cnt = 0;
+			
 			for ($j = $i; $j < @s ; $j ++) {
 				
 				my $o = $s[$j];
+				
 				if ($o eq '(') {
 					$func_end = 1;
 					my $j2;
 					
-					my $cnt = 1;
+					$cnt ++;
+					
+					
+					
 					for ($j2 = $j + 1; $j2 < @s ; $j2 ++) {
 						my $o = $s[$j2];
 						$buff .= $o;
@@ -351,9 +357,10 @@ sub _parse {
 				
 				
 			}
-			$i = $j;	
+			$i = $j;
 			
 			$self->debug("Found function = $func, buff = $buff");
+		
 			push @$node, {$func => $self->_parse($buff)};
 		} elsif ($c =~ /[0-9\.]/) {
 			my ($n, $idx) = $self->_parse_digit([@s[$i..$sl - 1]]);

@@ -68,7 +68,8 @@ my $f = $k[0];
 for (my $i = 1 ; $i <= $m ; $i++) {
 	my $ak = $k[2 * $i - 1];
 	my $bk = $k[2 * $i];
-	$f .= "+($ak*cos($i*$omega*x(1)))+($bk*sin($i*$omega*x(1)))";
+	my $p = $i*$omega;
+	$f .= "+($ak*cos(x(1)*$p))+($bk*sin(x(1)*$p))";
 }
 
 $json->{data} = {f => $f, length => 1.3};

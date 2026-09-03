@@ -18,7 +18,7 @@ my $pi = 3.14159265358979;
 my $max_amplitude = 32767 * $volume;
 
 
-# Load file
+# Load filegi
 
 my @input = <>;
 my $s = join '', @input;
@@ -31,8 +31,6 @@ my $f = $json->{data}->{f};
 
 my $tracer = new VectorTracer(debug => 0);
 my $node = $tracer->parse($f);
-
-
 
 
 open(my $fh, '>', 'tmp-play.pcm');
