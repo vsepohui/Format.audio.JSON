@@ -40,20 +40,28 @@ sub debug {
 
 sub trace {
 	my $self = shift;
-	my $node = shift // $self->{node};
-	my $x 	 = shift // 0;
+	my $node = shift // die "node is not specified";
+	my $x 	 = shift // die "x not specified";
+	
 	
 	if (ref $node eq 'HASH') {
 		my ($key) = keys %$node;
 		my $value = $node->{$key};
 		
 		if ($self->{functions}->{$key}) {
-			my $a = $self->trace($value, $x);
+			return $x if ($key eq 'x');
+
+			my $a = $self->trace({%$value}, $x);
+
 			return sin($a) if ($key eq 'sin');
 			return cos($a) if ($key eq 'cos');
 			return $x if ($key eq 'x');
-		} elsif ($self->{operators}->{$key}) {
-			my ($a, $b) = @$value;
+			...
+		} elsif (exists $self->{operators}->{$key}) {
+			my ($a, $b) = (@$value);
+			use Data::Dumper;
+			warn Dumper $a;
+			warn Dumper $b;
 			$a = $self->trace($a, $x);
 			$b = $self->trace($b, $x);
 			return $a + $b if ($key eq '+');
@@ -61,11 +69,16 @@ sub trace {
 			return $a * $b if ($key eq '*');
 			return $a / $b if ($key eq '/');
 			return $a ** $b if ($key eq '**');
+			...
 		}
 	} elsif (ref $node eq 'ARRAY') {
-		
+		...
+	} else {
+		return $node unless ref $node;
 	}
-	return $node;
+	
+	...
+	#return $node;
 }
 
 # Hack method for fix math priority: setup brackets to multi and div
@@ -279,11 +292,13 @@ sub _parse {
 		} elsif ($c eq '(') {
 			my $j;
 			my $buff = '';
+			
+			my $cnt = 0;
+			
 			for ($j = $i + 0; $j < @s ; $j ++) {
 				my $o = $s[$j];
 				$self->debug($o);
 				$buff .= $o;
-				my $cnt = 0;
 				if ($o eq '(') {
 					$cnt ++;
 					next;
@@ -291,7 +306,7 @@ sub _parse {
 				if ($o eq ')' || $j == scalar (@s) - 1) {
 					$self->debug("$cnt , cnt00");
 					$cnt --;
-					if ($cnt == -1) {
+					if ($cnt == 0) {
 						$self->debug("Buff sub = $buff");
 						#die $function;
 						push @$node, $self->_parse(substr($buff,1));
