@@ -164,7 +164,7 @@ sub parse {
 	$self->{digit} = '';
 	$self->{node} = undef;
 	$self->debug("Parse string original = $str");
-	$str = $self->prepare_multi_and_div($str);
+	#$str = $self->prepare_multi_and_div($str);
 	$self->debug("Parse string prepared = $str");
 	my $node = $self->_depack($self->_parse ($str));
 	$self->{node} = $node;
