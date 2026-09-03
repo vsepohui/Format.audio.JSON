@@ -12,6 +12,7 @@ Usage:
 Player:
 
 # ./player.pl < audio-files/demo-1.json
+# ./player-raw-aplay.pl < audio-files/demo-1.json
 	
 	
 Codec:
