@@ -69,13 +69,11 @@ sub trace {
 			...
 		}
 	} elsif (ref $node eq 'ARRAY') {
-		...
-	} else {
-		return $node unless ref $node;
-	}
+		#...
+	} 
 	
-	...
-	#return $node;
+	#...
+	return $node;
 }
 
 # Hack method for fix math priority: setup brackets to multi and div
