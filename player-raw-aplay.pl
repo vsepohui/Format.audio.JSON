@@ -42,7 +42,6 @@ for my $x (0 .. int ($length * 44100)) {
     
 	# Render audio from formula
 	my $signal = $tracer->trace($node, $t);
-	my $check = sin($t*880*3.1415);
    
     my $sample = $signal * $max_amplitude;
     
